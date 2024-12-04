@@ -37,8 +37,8 @@ text(20, steady_state_value - 0.05, ['K = ', num2str(steady_state_value, '%.2f')
 % Achsenbeschriftung und Titel
 grid on;
 xlabel('Zeit t (s)');
-ylabel('Füllstand x(t) (m)');
-title('Simulation des Füllstands für ein lineares Behältermodell L1 mit Zeitkonstante und Verstärkungsfaktor');
-legend('Füllstand x(t)', 'Endwert (Gain)', 'Zeitkonstante (T)');
+ylabel('Abfluss y(t) (m)');
+title('Simulation des Abflusses für ein lineares Behältermodell L2');
+legend('Abfluss q(t)', 'Endwert (Gain)', 'Zeitkonstante (T)');
 % Plot speichern
 saveas(gcf, 'simulation_ergebnis_L2.png'); % Speichern des Plots als PNG-Datei

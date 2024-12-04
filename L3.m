@@ -39,7 +39,7 @@ text(t2 + 10, y2, ['Steigung c2 = ' num2str(c2, '%.4f') ' m/(kg*s)'], 'Color', '
 grid on;
 xlabel('Zeit t (s)');
 ylabel('Füllstand x(t) (m)');
-title('Simulation des Füllstands für ein integratives Behältermodell mit Steigungsdreieck');
+title('Simulation des Füllstands für ein integratives Behältermodell');
 legend('Füllstand x(t)');
 
 

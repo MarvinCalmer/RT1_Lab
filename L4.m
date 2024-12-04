@@ -32,31 +32,33 @@ target_value = 0.632 * steady_state_value;
 T_index = find(y >= target_value, 1); % Index für ersten Punkt bei 63.2% des Endwerts
 T_approx = t(T_index); % Zeitkonstante T
 
-% Berechnung der Verzugszeit (Te) - erste deutliche Abweichung von Null
-Te_index = find(y > 0.05 * steady_state_value, 1);
-Te = t(Te_index);
 
-% Berechnung der klassischen Ausgleichszeit (Tb) - 98% des Endwertes
-Tb_index = find(y >= 0.98 * steady_state_value, 1);
-Tb = t(Tb_index);
+% Ableitung (Wendetangente)
+dy_dt = diff(y) ./ diff(t); % Numerische Ableitung der Sprungantwort
+[~, wende_index] = max(dy_dt); % Index des maximalen Anstiegs (Wendepunkt)
+t_w = t(wende_index); % Zeit des Wendepunkts
+x_w = y(wende_index); % Sprungantwort beim Wendepunkt
+slope_w = dy_dt(wende_index); % Steigung der Wendetangente
 
-% Berechnung der Dämpfung des Systems
-damping_info = damp(G_total);
+% Verzugszeit (T_e) basierend auf Tangente (Schnittpunkt mit y=0)
+Te = t_w - x_w / slope_w;
+
+% Ausgleichszeit (T_b) (Schnittpunkt der Tangente mit Endwert)
+Tb = (steady_state_value - x_w) / slope_w + t_w;
+Tb=Tb-Te;
 
 % Plot erstellen
 figure;
 plot(t, y, 'b-', 'LineWidth', 1.5); % Plot in Blau mit Linienbreite 1.5
 hold on;
 yline(steady_state_value, 'g--'); % Verstärkungsfaktor-Linie
-xline(T_approx, 'r--'); % Zeitkonstante-Linie
 xline(Te, 'm--'); % Verzugszeit-Linie
 xline(Tb, 'c--'); % klassische Ausgleichszeit-Linie
-
-% Markierung des Punktes bei Zeitkonstanten
-plot(T_approx, target_value, 'ro'); 
+plot(t_w, x_w, 'ro', 'DisplayName', 'Wendepunkt'); % Wendepunkt
+plot([t_w Tb], [x_w steady_state_value], 'r--', 'DisplayName', 'Wendetangente'); % Wendetangente
+%xline(Tb, 'm--', ['T_b = ', num2str(t_b, '%.2f'), ' s']); % Ausgleichszeit-Linie
 
 % Beschriftung der Verstärkungsfaktors und der Zeitkonstanten
-text(T_approx + 20, target_value, ['T = ', num2str(T_approx, '%.2f'), ' s'], 'Color', 'red', 'HorizontalAlignment', 'left');
 text(20, steady_state_value - 0.05, ['K = ', num2str(steady_state_value, '%.2f'), ' m'], 'Color', 'green', 'HorizontalAlignment', 'left');
 text(Te + 10, 0.1 * steady_state_value, ['T_e = ', num2str(Te, '%.2f'), ' s'], 'Color', 'magenta', 'HorizontalAlignment', 'left');
 text(Tb + 10, 0.9 * steady_state_value, ['T_b = ', num2str(Tb, '%.2f'), ' s'], 'Color', 'cyan', 'HorizontalAlignment', 'left');
@@ -66,14 +68,11 @@ grid on;
 xlabel('Zeit t (s)');
 ylabel('Füllstand x(t) (m)');
 title('Simulation der Sprungantwort für eine Kaskade von zwei L2-Modellen');
-legend('Füllstand x(t)', 'Endwert (Gain)', 'Zeitkonstante (T)', 'Verzugszeit (T_e)', 'Ausgleichszeit (T_b)');
+legend('Füllstand x(t)', 'Endwert (Gain)', 'Verzugszeit (T_e)', 'Ausgleichszeit (T_b)');
 
 % Ergebnisse anzeigen
-disp(['Steigung der Sprungantwort bei t=0: ', num2str(initial_slope, '%.4f'), ' m/s']);
 disp(['Verzugszeit Te: ', num2str(Te, '%.2f'), ' s']);
 disp(['Ausgleichszeit Tb: ', num2str(Tb, '%.2f'), ' s']);
-disp('Dämpfungswerte:');
-disp(damping_info);
 
 % Plot speichern
 saveas(gcf, 'simulation_ergebnis_L4.png');

@@ -38,7 +38,7 @@ text(20, steady_state_value - 0.05, ['K = ', num2str(steady_state_value, '%.2f')
 grid on;
 xlabel('Zeit t (s)');
 ylabel('Füllstand x(t) (m)');
-title('Simulation des Füllstands für ein lineares Behältermodell L1 mit Zeitkonstante und Verstärkungsfaktor');
+title('Simulation des Füllstands für ein lineares Behältermodell L1 ');
 legend('Füllstand x(t)', 'Endwert (Gain)', 'Zeitkonstante (T)');
 
 % Plot speichern
